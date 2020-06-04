@@ -7,6 +7,8 @@ var MESSAGES = ['Всё отлично!',
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'];
 var NAMES_OF_COMMENTATORS = ['Эд', 'Фред', 'Сэд', 'Мэд', 'Брэд', 'Рэд'];
+var LIKES_VALUE_MIN = 15;
+var LIKES_VALUE_MAX = 200;
 var photoListElement = document.querySelector('.pictures');
 var photoTemplate = document.querySelector('#picture')
     .content
@@ -22,8 +24,8 @@ var comments = function () {
   for (var i = 0; i < QUANTITY_OF_PHOTOS; i++) {
     var commentTemplate = {
       avatar: 'img/avatar' + getRandomNumber(1, 6) + '.svg',
-      message: MESSAGES[getRandomNumber(0, 5)],
-      name: NAMES_OF_COMMENTATORS[getRandomNumber(0, 5)]
+      message: MESSAGES[getRandomNumber(0, MESSAGES.length - 1)],
+      name: NAMES_OF_COMMENTATORS[getRandomNumber(0, NAMES_OF_COMMENTATORS.length - 1)]
     };
     eachComment.push(commentTemplate);
   }
@@ -36,7 +38,7 @@ var photos = function () {
     var eachPhoto = {
       url: 'photos/' + i + '.jpg',
       description: '',
-      likes: getRandomNumber(15, 200),
+      likes: getRandomNumber(LIKES_VALUE_MIN, LIKES_VALUE_MAX),
       comments: comments()[getRandomNumber(0, QUANTITY_OF_PHOTOS - 1)]
     };
     array.push(eachPhoto);
