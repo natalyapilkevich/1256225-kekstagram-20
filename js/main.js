@@ -99,11 +99,11 @@ bigСommentsList.innerHTML = ' ';
 
 var createComment = function (avatarSrc, name, message) {
   var comment = document.createElement('li');
-  comment.classList.add('.social__comment');
+  comment.classList.add('social__comment');
   bigСommentsList.append(comment);
 
   var img = document.createElement('img');
-  img.classList.add('.social__picture');
+  img.classList.add('social__picture');
   img.src = '' + avatarSrc;
   img.alt = name;
   img.width = '35';
@@ -111,7 +111,7 @@ var createComment = function (avatarSrc, name, message) {
   comment.append(img);
 
   var text = document.createElement('p');
-  text.classList.add('.social__text');
+  text.classList.add('social__text');
   text.textContent = message;
   comment.append(text);
 };
