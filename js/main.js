@@ -93,20 +93,16 @@ document.querySelector('.pictures__title').classList.remove('visually-hidden');
 
 // Для одной полноразмерной фотографии
 
-var defaultPhoto = listOfPhotos[0];
-
 var bigPicture = document.querySelector('.big-picture');
 
 var createBigPicture = function (photo) {
   bigPicture.querySelector('.big-picture__img').querySelector('img').src = photo.url;
   bigPicture.querySelector('.likes-count').textContent = photo.likes;
   bigPicture.querySelector('.comments-count').textContent = photo.comments.length;
-  bigPicture.querySelector('.social__caption').textContent = defaultPhoto.description;
+  bigPicture.querySelector('.social__caption').textContent = photo.description;
   bigPicture.querySelector('.social__comment-count').classList.add('hidden');
   bigPicture.querySelector('.comments-loader').classList.add('hidden');
 };
-
-createBigPicture(defaultPhoto);
 
 var bigСommentsList = bigPicture.querySelector('.social__comments');
 bigСommentsList.innerHTML = ' ';
@@ -130,9 +126,56 @@ var createComment = function (commentary) {
   comment.append(text);
 };
 
-for (i = 0; i < defaultPhoto.comments.length; i++) {
-  createComment(defaultPhoto.comments[i]);
+var createCommentsPool = function (photo) {
+  for (i = 0; i < photo.comments.length; i++) {
+    createComment(photo.comments[i]);
+  }
+};
+
+// Для всех полноразмерных фотографий
+
+var thumbnailes = document.querySelectorAll('.picture');
+
+var addClickHandler = function (thumbnail, photo) {
+  thumbnail.addEventListener('click', function () {
+    createBigPicture(photo);
+    createCommentsPool(photo);
+    openBigPhoto();
+  });
+};
+
+for (i = 0; i < thumbnailes.length; i++) {
+  addClickHandler(thumbnailes[i], listOfPhotos[i]);
 }
+
+var bigPhotoCancel = document.querySelector('#picture-cancel');
+
+var onBigPhotoEscPress = function (evt) {
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    closeBigPhoto();
+  }
+};
+
+var openBigPhoto = function () {
+  bigPicture.classList.remove('hidden');
+  document.querySelector('body').classList.add('modal-open');
+
+  document.addEventListener('keydown', onBigPhotoEscPress);
+};
+
+var closeBigPhoto = function () {
+  bigPicture.classList.add('hidden');
+  document.querySelector('body').classList.remove('modal-open');
+  bigСommentsList.innerHTML = ' ';
+
+  document.removeEventListener('keydown', onBigPhotoEscPress);
+};
+
+
+bigPhotoCancel.addEventListener('click', function () {
+  closeBigPhoto();
+});
 
 // Загрузка изображения и показ формы редактирования
 
@@ -170,6 +213,7 @@ var closePopup = function () {
   photoWithEffect.style.transform = 'scale(1)';
 
   photoWithEffect.className = 'img-upload__preview';
+  effectPin.removeEventListener('mouseup', appliesFilter);
 };
 
 uploadFile.addEventListener('change', function () {
