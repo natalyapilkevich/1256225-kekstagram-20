@@ -2,6 +2,7 @@
 (function () {
   var PHOTO_SCALE_VALUE_MIN = '25%';
   var PHOTO_SCALE_VALUE_MAX = '100%';
+  var MAX_EFFECT_SLIDER_LENGTH = 455;
   // Загрузка изображения и показ формы редактирования
 
   var uploadFile = document.querySelector('#upload-file');
@@ -78,13 +79,16 @@
 
   var fieldsetOfEffects = imageEditingForm.querySelector('.img-upload__effects');
   var effectPin = imageEditingForm.querySelector('.effect-level__pin');
-  var effectPinInput = imageEditingForm.querySelector('.effect-level__value');
+  var effectDepth = imageEditingForm.querySelector('.effect-level__depth');
+
 
   var filterChangeHandler = function (evt) {
     photoWithEffect.className = 'img-upload__preview effects__preview--' + evt.target.value;
     if (!originalEffect.checked) {
       effectLevel.classList.remove('hidden');
       photoWithEffect.style.filter = '';
+      effectPin.style.left = '100%';
+      effectDepth.style.width = '100%';
     } else {
       effectLevel.classList.add('hidden');
     }
@@ -92,26 +96,74 @@
 
   fieldsetOfEffects.addEventListener('change', filterChangeHandler);
 
-  var appliesFilter = function () {
+  var appliesFilter = function (value) {
     if (photoWithEffect.className.includes('chrome')) {
-      photoWithEffect.style.filter = 'grayscale(' + effectPinInput.value / 100 + ')';
+      photoWithEffect.style.filter = 'grayscale(' + value / 100 + ')';
 
     } else if (photoWithEffect.className.includes('sepia')) {
-      photoWithEffect.style.filter = 'sepia(' + effectPinInput.value / 100 + ')';
+      photoWithEffect.style.filter = 'sepia(' + value / 100 + ')';
 
     } else if (photoWithEffect.className.includes('marvin')) {
-      photoWithEffect.style.filter = 'invert(' + effectPinInput.value + '%)';
+      photoWithEffect.style.filter = 'invert(' + value + '%)';
 
     } else if (photoWithEffect.className.includes('phobos')) {
-      photoWithEffect.style.filter = 'blur(' + effectPinInput.value * 0.03 + 'px)';
+      photoWithEffect.style.filter = 'blur(' + value * 0.03 + 'px)';
 
     } else if (photoWithEffect.className.includes('heat')) {
-      photoWithEffect.style.filter = 'brightness(' + effectPinInput.value * 0.02 + 1 + ')';
-
+      photoWithEffect.style.filter = 'brightness(' + value * 0.02 + 1 + ')';
     }
   };
 
-  effectPin.addEventListener('mouseup', appliesFilter);
+  effectPin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: evt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: evt.clientY
+      };
+
+      if (parseInt(effectPin.style.left, 10) < 0) {
+        effectPin.style.left = '0';
+        shift.x = 0;
+        onMouseUp(moveEvt);
+      } else if (parseInt(effectPin.style.left, 10) > MAX_EFFECT_SLIDER_LENGTH) {
+        effectPin.style.left = MAX_EFFECT_SLIDER_LENGTH + 'px';
+        shift.x = 0;
+        onMouseUp(moveEvt);
+      } else {
+        effectPin.style.left = (effectPin.offsetLeft - shift.x) + 'px';
+      }
+
+      var powerOfEffect = parseInt(effectPin.style.left, 10) * 100 / MAX_EFFECT_SLIDER_LENGTH;
+
+      appliesFilter(powerOfEffect);
+
+      effectDepth.style.width = powerOfEffect + '%';
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      effectPin.removeEventListener('mousemove', onMouseMove);
+      effectPin.removeEventListener('mouseup', onMouseUp);
+    };
+
+    effectPin.addEventListener('mousemove', onMouseMove);
+    effectPin.addEventListener('mouseup', onMouseUp);
+
+  });
 
   // Валидация хэштегов
 
