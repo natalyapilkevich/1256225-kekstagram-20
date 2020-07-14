@@ -13,13 +13,17 @@
     return photoElement;
   };
 
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < window.data.listOfPhotos.length; i++) {
-    fragment.appendChild(renderPhoto(window.data.listOfPhotos[i]));
-  }
+  var successHandler = function (data) {
+    var fragment = document.createDocumentFragment();
+    for (var i = 0; i < data.length; i++) {
+      fragment.appendChild(renderPhoto(data [i]));
+    }
 
-  photoListElement.appendChild(fragment);
+    photoListElement.appendChild(fragment);
 
-  document.querySelector('.pictures__title').classList.remove('visually-hidden');
+    document.querySelector('.pictures__title').classList.remove('visually-hidden');
+  };
+
+  window.load(successHandler);
 
 })();
