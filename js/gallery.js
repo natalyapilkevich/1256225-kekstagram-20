@@ -1,9 +1,9 @@
 'use strict';
 (function () {
-  var successHandler = function (data) {
+  var onSuccess = function (data) {
     var thumbnailes = document.querySelectorAll('.picture');
 
-    var addClickHandler = function (thumbnail, photo) {
+    var onThumbnail = function (thumbnail, photo) {
       thumbnail.addEventListener('click', function () {
         window.fullSizePicture.createBigPicture(photo);
         window.fullSizePicture.createCommentsPool(photo);
@@ -12,7 +12,7 @@
     };
 
     for (var i = 0; i < thumbnailes.length; i++) {
-      addClickHandler(thumbnailes[i], data[i]);
+      onThumbnail(thumbnailes[i], data[i]);
     }
 
     var bigPhotoCancel = document.querySelector('#picture-cancel');
@@ -44,5 +44,5 @@
     });
   };
 
-  window.load(successHandler);
+  window.load(onSuccess);
 })();
