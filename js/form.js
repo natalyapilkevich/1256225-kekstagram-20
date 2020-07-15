@@ -7,6 +7,7 @@
 
   var uploadFile = document.querySelector('#upload-file');
   var imageEditingForm = document.querySelector('.img-upload__overlay');
+  var photoWithEffect = imageEditingForm.querySelector('.img-upload__preview');
   var uploadCancel = imageEditingForm.querySelector('#upload-cancel');
   var originalEffect = imageEditingForm.querySelector('input[id=effect-none]');
   var effectLevel = imageEditingForm.querySelector('.effect-level');
@@ -40,6 +41,11 @@
 
     photoWithEffect.className = 'img-upload__preview';
     effectPin.removeEventListener('mouseup', appliesFilter);
+    photoWithEffect.style.filter = '';
+
+    hashtagsInput.value = '';
+    commentInput.value = '';
+
   };
 
   uploadFile.addEventListener('change', function () {
@@ -53,7 +59,6 @@
 
   // Масштабирование изображения
 
-  var photoWithEffect = imageEditingForm.querySelector('.img-upload__preview');
   var controlSmaller = imageEditingForm.querySelector('.scale__control--smaller');
   var controlBigger = imageEditingForm.querySelector('.scale__control--bigger');
   var controlValue = imageEditingForm.querySelector('.scale__control--value');
@@ -82,7 +87,7 @@
   var effectDepth = imageEditingForm.querySelector('.effect-level__depth');
 
 
-  var filterChangeHandler = function (evt) {
+  var onFilter = function (evt) {
     photoWithEffect.className = 'img-upload__preview effects__preview--' + evt.target.value;
     if (!originalEffect.checked) {
       effectLevel.classList.remove('hidden');
@@ -94,7 +99,7 @@
     }
   };
 
-  fieldsetOfEffects.addEventListener('change', filterChangeHandler);
+  fieldsetOfEffects.addEventListener('change', onFilter);
 
   var appliesFilter = function (value) {
     if (photoWithEffect.className.includes('chrome')) {
@@ -207,7 +212,6 @@
     var hashtagsValue = hashtagsInput.value;
     var hashtags = hashtagsValue.split(space);
 
-
     if (checkRegular(hashtags, regular) === false) {
       hashtagsInput.setCustomValidity('Должны быть только цифры и буквы, а начинаться с #');
 
@@ -233,5 +237,58 @@
     }
   });
 
-})();
+  // Отправка формы
 
+  var main = document.querySelector('main');
+
+  var successMessage = document.querySelector('#success')
+  .content
+  .querySelector('.success');
+
+  var errorMessage = document.querySelector('#error')
+  .content
+  .querySelector('.error');
+
+  var onMessageEscPress = function (evt) {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      closeMessage();
+    }
+  };
+
+  var closeMessage = function () {
+    document.querySelector('body').classList.remove('modal-open');
+    document.removeEventListener('keydown', onMessageEscPress);
+    if (main.contains(successMessage)) {
+      successMessage.parentNode.removeChild(successMessage);
+    } else if (main.contains(errorMessage)) {
+      errorMessage.parentNode.removeChild(errorMessage);
+    }
+  };
+
+  var getMessage = function (message) {
+    closePopup();
+    main.insertAdjacentElement('beforeEnd', message);
+    document.addEventListener('keydown', onMessageEscPress);
+  };
+
+  var onUpload = function () {
+    getMessage(successMessage);
+    document.addEventListener('click', function () {
+      closeMessage();
+    });
+  };
+
+  var onDenial = function () {
+    getMessage(errorMessage);
+    document.addEventListener('click', function () {
+      closeMessage();
+    });
+  };
+
+  var form = document.querySelector('.img-upload__form');
+  form.addEventListener('submit', function (evt) {
+    window.upload(new FormData(form), onUpload, onDenial);
+    evt.preventDefault();
+  });
+})();

@@ -13,17 +13,17 @@
     return photoElement;
   };
 
-  var successHandler = function (data) {
+  var onSuccess = function (data) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < data.length; i++) {
-      fragment.appendChild(renderPhoto(data [i]));
+      fragment.appendChild(renderPhoto(data[i]));
     }
 
     photoListElement.appendChild(fragment);
 
-    document.querySelector('.pictures__title').classList.remove('visually-hidden');
+    photoListElement.querySelector('.pictures__title').classList.remove('visually-hidden');
   };
 
-  window.load(successHandler);
+  window.load(onSuccess);
 
 })();
