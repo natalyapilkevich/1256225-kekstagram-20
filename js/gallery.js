@@ -44,5 +44,5 @@
     });
   };
 
-  window.load(onSuccess);
+  window.backend.load(onSuccess);
 })();

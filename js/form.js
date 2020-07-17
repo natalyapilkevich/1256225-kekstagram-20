@@ -266,21 +266,21 @@
     }
   };
 
-  var getMessage = function (message) {
+  var renderMessage = function (message) {
     closePopup();
     main.insertAdjacentElement('beforeEnd', message);
     document.addEventListener('keydown', onMessageEscPress);
   };
 
   var onUpload = function () {
-    getMessage(successMessage);
+    renderMessage(successMessage);
     document.addEventListener('click', function () {
       closeMessage();
     });
   };
 
-  var onDenial = function () {
-    getMessage(errorMessage);
+  var onError = function () {
+    renderMessage(errorMessage);
     document.addEventListener('click', function () {
       closeMessage();
     });
@@ -288,7 +288,7 @@
 
   var form = document.querySelector('.img-upload__form');
   form.addEventListener('submit', function (evt) {
-    window.upload(new FormData(form), onUpload, onDenial);
+    window.backend.upload(new FormData(form), onUpload, onError);
     evt.preventDefault();
   });
 })();

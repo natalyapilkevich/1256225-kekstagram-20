@@ -15,7 +15,7 @@
     document.body.insertAdjacentElement('afterbegin', node);
   };
 
-  window.load = function (onSuccess) {
+  var load = function (onSuccess) {
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';
@@ -42,7 +42,7 @@
     xhr.send();
   };
 
-  window.upload = function (data, onUpload, onDenial) {
+  var upload = function (data, onUpload, onDenial) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -56,6 +56,11 @@
 
     xhr.open('POST', URL_UPLOAD);
     xhr.send(data);
+  };
+
+  window.backend = {
+    load: load,
+    upload: upload
   };
 
 })();
