@@ -18,22 +18,22 @@
 
   var removePhotos = function () {
     var picturesSection = document.querySelector('.pictures');
-    var pictures = document.querySelectorAll('.picture__img');
+    var pictures = document.querySelectorAll('.picture');
     pictures.forEach(function (el) {
-      picturesSection.remove(el);
+      picturesSection.removeChild(el);
     });
   };
 
-
-  var shuffle = function (arr) {
-    for (var i = arr.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var temp = arr[j];
-      arr[j] = arr[i];
-      arr[i] = temp;
+  var mix = function (arr) {
+    var newarr = [];
+    for (var i = MAX_COUNT_RANDOM_PHOTO; i > 0; i--) {
+      var j = window.getRandomNumber(0, arr.length - 1);
+      newarr.push(arr[j]);
+      arr.splice(j, 1);
     }
-    return arr;
+    return newarr;
   };
+
 
   var makeDefaultOrder = function () {
     removeActiveFilter();
@@ -46,7 +46,7 @@
     removeActiveFilter();
     randomOrderButton.classList.add('img-filters__button--active');
     removePhotos();
-    var randomArray = shuffle(photos.slice()).slice(0, MAX_COUNT_RANDOM_PHOTO);
+    var randomArray = mix(photos.slice());
     window.debounce(window.picture.renderGallery(randomArray));
   };
 
