@@ -1,14 +1,20 @@
 'use strict';
 (function () {
+  var MAX_COMMENTS_NUMBER = 5;
+
   var bigPicture = document.querySelector('.big-picture');
+  var commentsLoader = bigPicture.querySelector('.comments-loader');
+  var commentCount = bigPicture.querySelector('.social__comment-count');
 
   var createBigPicture = function (photo) {
     bigPicture.querySelector('.big-picture__img').querySelector('img').src = photo.url;
     bigPicture.querySelector('.likes-count').textContent = photo.likes;
-    bigPicture.querySelector('.comments-count').textContent = photo.comments.length;
+    if (photo.comments.length < MAX_COMMENTS_NUMBER) {
+      commentCount.textContent = photo.comments.length + ' из ' + photo.comments.length + ' комментариев';
+    } else {
+      commentCount.textContent = '5 из ' + photo.comments.length + ' комментариев';
+    }
     bigPicture.querySelector('.social__caption').textContent = photo.description;
-    bigPicture.querySelector('.social__comment-count').classList.add('hidden');
-    bigPicture.querySelector('.comments-loader').classList.add('hidden');
   };
 
   var bigСommentsList = bigPicture.querySelector('.social__comments');
@@ -33,17 +39,27 @@
     comment.append(text);
   };
 
-  var createCommentsPool = function (photo) {
-    for (var i = 0; i < photo.comments.length; i++) {
-      createComment(photo.comments[i]);
+  var createCommentsPool = function (commentsPool) {
+    if (commentsPool.length < MAX_COMMENTS_NUMBER) {
+      for (var i = 0; i < commentsPool.length; i++) {
+        createComment(commentsPool[i]);
+      }
+      commentsLoader.classList.add('hidden');
+    } else {
+      for (i = 0; i < MAX_COMMENTS_NUMBER; i++) {
+        createComment(commentsPool[i]);
+      }
+      commentsLoader.classList.remove('hidden');
     }
   };
+
 
   window.fullSizePicture = {
     bigPicture: bigPicture,
     bigСommentsList: bigСommentsList,
     createBigPicture: createBigPicture,
-    createCommentsPool: createCommentsPool
+    createCommentsPool: createCommentsPool,
+    commentCount: commentCount
   };
 
 })();

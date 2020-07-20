@@ -1,13 +1,35 @@
 'use strict';
 (function () {
+  var MAX_COMMENTS_NUMBER = 5;
+
+  var commentsLoaderButton = document.querySelector('.comments-loader');
+
   var onSuccess = function (data) {
     var thumbnailes = document.querySelectorAll('.picture');
 
     var onThumbnail = function (thumbnail, photo) {
       thumbnail.addEventListener('click', function () {
+        var commentsPool = photo.comments.slice();
+        var counter = MAX_COMMENTS_NUMBER;
+
         window.fullSizePicture.createBigPicture(photo);
-        window.fullSizePicture.createCommentsPool(photo);
+        window.fullSizePicture.createCommentsPool(commentsPool);
+        commentsPool.splice(0, MAX_COMMENTS_NUMBER);
+
         openBigPhoto();
+
+        var showComments = function () {
+          window.fullSizePicture.createCommentsPool(commentsPool);
+
+          if (commentsPool.length > MAX_COMMENTS_NUMBER) {
+            counter += MAX_COMMENTS_NUMBER;
+            window.fullSizePicture.commentCount.textContent = counter + ' из ' + photo.comments.length + ' комментариев';
+          } else {
+            window.fullSizePicture.commentCount.textContent = photo.comments.length + ' из ' + photo.comments.length + ' комментариев';
+          }
+          commentsPool.splice(0, MAX_COMMENTS_NUMBER);
+        };
+        commentsLoaderButton.addEventListener('click', showComments);
       });
     };
 
@@ -45,4 +67,8 @@
   };
 
   window.backend.load(onSuccess);
+
+  window.gallery = {
+    onSuccess: onSuccess
+  };
 })();
