@@ -6,11 +6,26 @@
 
   var onSuccess = function (data) {
     var thumbnailes = document.querySelectorAll('.picture');
+    var commentsPool = [];
+    var counter = MAX_COMMENTS_NUMBER;
+    var photoComments = [];
+
+    var showComments = function () {
+      window.fullSizePicture.createCommentsPool(commentsPool);
+
+      if (commentsPool.length > MAX_COMMENTS_NUMBER) {
+        counter += MAX_COMMENTS_NUMBER;
+        window.fullSizePicture.commentCount.textContent = counter + ' из ' + photoComments.length + ' комментариев';
+      } else {
+        window.fullSizePicture.commentCount.textContent = photoComments.length + ' из ' + photoComments.length + ' комментариев';
+      }
+      commentsPool.splice(0, MAX_COMMENTS_NUMBER);
+    };
 
     var onThumbnail = function (thumbnail, photo) {
       thumbnail.addEventListener('click', function () {
-        var commentsPool = photo.comments.slice();
-        var counter = MAX_COMMENTS_NUMBER;
+        photoComments = photo.comments;
+        commentsPool = photo.comments.slice();
 
         window.fullSizePicture.createBigPicture(photo);
         window.fullSizePicture.createCommentsPool(commentsPool);
@@ -18,17 +33,6 @@
 
         openBigPhoto();
 
-        var showComments = function () {
-          window.fullSizePicture.createCommentsPool(commentsPool);
-
-          if (commentsPool.length > MAX_COMMENTS_NUMBER) {
-            counter += MAX_COMMENTS_NUMBER;
-            window.fullSizePicture.commentCount.textContent = counter + ' из ' + photo.comments.length + ' комментариев';
-          } else {
-            window.fullSizePicture.commentCount.textContent = photo.comments.length + ' из ' + photo.comments.length + ' комментариев';
-          }
-          commentsPool.splice(0, MAX_COMMENTS_NUMBER);
-        };
         commentsLoaderButton.addEventListener('click', showComments);
       });
     };
@@ -59,6 +63,8 @@
       window.fullSizePicture.bigСommentsList.innerHTML = ' ';
 
       document.removeEventListener('keydown', onBigPhotoEscPress);
+      commentsLoaderButton.removeEventListener('click', showComments);
+      counter = 5;
     };
 
     bigPhotoCancel.addEventListener('click', function () {
