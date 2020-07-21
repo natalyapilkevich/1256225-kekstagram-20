@@ -24,6 +24,7 @@
   var openPopup = function () {
     imageEditingForm.classList.remove('hidden');
     document.querySelector('body').classList.add('modal-open');
+    window.userPhoto.loadUserPhoto();
 
     document.addEventListener('keydown', onPopupEscPress);
   };
