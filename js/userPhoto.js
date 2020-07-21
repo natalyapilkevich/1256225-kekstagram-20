@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   var uploadFile = document.querySelector('#upload-file');
 
   var loadUserPhoto = function () {

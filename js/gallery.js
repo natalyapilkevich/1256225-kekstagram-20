@@ -6,30 +6,30 @@
 
   var onSuccess = function (data) {
     var thumbnailes = document.querySelectorAll('.picture');
-    var commentsPool = [];
+    var displayedСomments = [];
     var counter = MAX_COMMENTS_NUMBER;
     var photoComments = [];
 
     var showComments = function () {
-      window.fullSizePicture.createCommentsPool(commentsPool);
+      window.fullSizePicture.createCommentsPool(displayedСomments);
 
-      if (commentsPool.length > MAX_COMMENTS_NUMBER) {
+      if (displayedСomments.length > MAX_COMMENTS_NUMBER) {
         counter += MAX_COMMENTS_NUMBER;
         window.fullSizePicture.commentCount.textContent = counter + ' из ' + photoComments.length + ' комментариев';
       } else {
         window.fullSizePicture.commentCount.textContent = photoComments.length + ' из ' + photoComments.length + ' комментариев';
       }
-      commentsPool.splice(0, MAX_COMMENTS_NUMBER);
+      displayedСomments.splice(0, MAX_COMMENTS_NUMBER);
     };
 
     var onThumbnail = function (thumbnail, photo) {
       thumbnail.addEventListener('click', function () {
         photoComments = photo.comments;
-        commentsPool = photo.comments.slice();
+        displayedСomments = photo.comments.slice();
 
         window.fullSizePicture.createBigPicture(photo);
-        window.fullSizePicture.createCommentsPool(commentsPool);
-        commentsPool.splice(0, MAX_COMMENTS_NUMBER);
+        window.fullSizePicture.createCommentsPool(displayedСomments);
+        displayedСomments.splice(0, MAX_COMMENTS_NUMBER);
 
         openBigPhoto();
 

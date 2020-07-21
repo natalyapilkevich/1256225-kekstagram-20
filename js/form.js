@@ -3,6 +3,7 @@
   var PHOTO_SCALE_VALUE_MIN = '25%';
   var PHOTO_SCALE_VALUE_MAX = '100%';
   var MAX_EFFECT_SLIDER_LENGTH = 455;
+
   // Загрузка изображения и показ формы редактирования
 
   var uploadFile = document.querySelector('#upload-file');
@@ -41,7 +42,7 @@
     photoWithEffect.style.transform = 'scale(1)';
 
     photoWithEffect.className = 'img-upload__preview';
-    effectPin.removeEventListener('mouseup', appliesFilter);
+    effectPin.removeEventListener('mouseup', applyFilter);
     photoWithEffect.style.filter = '';
 
     hashtagsInput.value = '';
@@ -102,7 +103,7 @@
 
   fieldsetOfEffects.addEventListener('change', onFilter);
 
-  var appliesFilter = function (value) {
+  var applyFilter = function (value) {
     if (photoWithEffect.className.includes('chrome')) {
       photoWithEffect.style.filter = 'grayscale(' + value / 100 + ')';
 
@@ -154,7 +155,7 @@
 
       var powerOfEffect = parseInt(effectPin.style.left, 10) * 100 / MAX_EFFECT_SLIDER_LENGTH;
 
-      appliesFilter(powerOfEffect);
+      applyFilter(powerOfEffect);
 
       effectDepth.style.width = powerOfEffect + '%';
     };
@@ -178,7 +179,7 @@
   var checkRegular = function (arr, reg) {
     var flag = true;
     for (var i = 0; i < arr.length; i++) {
-      if (!reg.test(arr[i])) {
+      if (!reg.test(arr[i]) && arr[i] !== '') {
         flag = false;
       }
     }
@@ -188,7 +189,7 @@
   var checkLength = function (arr) {
     var flag = true;
     for (var i = 0; i < arr.length; i++) {
-      if (arr[i].length < 2 || arr[i].length > 20) {
+      if (arr[i] !== '' && (arr[i].length < 2 || arr[i].length > 20)) {
         flag = false;
       }
     }
@@ -199,7 +200,7 @@
     var flag = true;
     for (var i = 0; i < arr.length; i++) {
       for (var j = i + 1; j < arr.length; j++) {
-        if (arr[i] === arr[j]) {
+        if (arr[i].toLowerCase() === arr[j].toLowerCase()) {
           return false;
         }
       }
@@ -215,26 +216,33 @@
 
     if (checkRegular(hashtags, regular) === false) {
       hashtagsInput.setCustomValidity('Должны быть только цифры и буквы, а начинаться с #');
+      hashtagsInput.style.boxShadow = 'inset 0 0 0 5px red';
 
     } else if (checkLength(hashtags) === false) {
       hashtagsInput.setCustomValidity('Хэштег должен быть меньше, чем из 20 символов');
+      hashtagsInput.style.boxShadow = 'inset 0 0 0 5px red';
 
     } else if (checkRepeat(hashtags) === false) {
       hashtagsInput.setCustomValidity('Не должно быть повторяющихся хэштегов');
+      hashtagsInput.style.boxShadow = 'inset 0 0 0 5px red';
 
     } else if (hashtags.length > 5) {
       hashtagsInput.setCustomValidity('Слишком много, нужно не больше 5 хэштегов');
+      hashtagsInput.style.boxShadow = 'inset 0 0 0 5px red';
 
     } else {
       hashtagsInput.setCustomValidity('');
+      hashtagsInput.style.boxShadow = 'none';
     }
   });
 
   commentInput.addEventListener('input', function () {
     if (commentInput.validity.tooLong) {
       commentInput.setCustomValidity('Комментарий слишком длинный');
+      commentInput.style.boxShadow = 'inset 0 0 0 5px red';
     } else {
       commentInput.setCustomValidity('');
+      commentInput.style.boxShadow = 'none';
     }
   });
 
@@ -275,15 +283,19 @@
 
   var onUpload = function () {
     renderMessage(successMessage);
-    document.addEventListener('click', function () {
-      closeMessage();
+    document.addEventListener('click', function (evt) {
+      if (evt.target !== successMessage.querySelector('.success__inner') && (evt.target !== successMessage.querySelector('.success__title'))) {
+        closeMessage();
+      }
     });
   };
 
   var onError = function () {
     renderMessage(errorMessage);
-    document.addEventListener('click', function () {
-      closeMessage();
+    document.addEventListener('click', function (evt) {
+      if (evt.target !== errorMessage.querySelector('.error__inner') && (evt.target !== errorMessage.querySelector('.error__title'))) {
+        closeMessage();
+      }
     });
   };
 

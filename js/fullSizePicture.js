@@ -39,20 +39,19 @@
     comment.append(text);
   };
 
-  var createCommentsPool = function (commentsPool) {
-    if (commentsPool.length < MAX_COMMENTS_NUMBER) {
-      for (var i = 0; i < commentsPool.length; i++) {
-        createComment(commentsPool[i]);
+  var createCommentsPool = function (displayedСomments) {
+    if (displayedСomments.length < MAX_COMMENTS_NUMBER) {
+      for (var i = 0; i < displayedСomments.length; i++) {
+        createComment(displayedСomments[i]);
       }
       commentsLoader.classList.add('hidden');
     } else {
       for (i = 0; i < MAX_COMMENTS_NUMBER; i++) {
-        createComment(commentsPool[i]);
+        createComment(displayedСomments[i]);
       }
       commentsLoader.classList.remove('hidden');
     }
   };
-
 
   window.fullSizePicture = {
     bigPicture: bigPicture,

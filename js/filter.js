@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var MAX_COUNT_RANDOM_PHOTO = 10;
+
   var photos = [];
   var imageFilter = document.querySelector('.img-filters');
   var defaultOrderButton = imageFilter.querySelector('#filter-default');
@@ -25,13 +26,13 @@
   };
 
   var mix = function (arr) {
-    var randomPhoto = [];
+    var randomPhotos = [];
     for (var i = MAX_COUNT_RANDOM_PHOTO; i > 0; i--) {
       var j = window.getRandomNumber(0, arr.length - 1);
-      randomPhoto.push(arr[j]);
+      randomPhotos.push(arr[j]);
       arr.splice(j, 1);
     }
-    return randomPhoto;
+    return randomPhotos;
   };
 
   var changeFilter = function (button, data) {
