@@ -64,7 +64,7 @@
 
       document.removeEventListener('keydown', onBigPhotoEscPress);
       commentsLoaderButton.removeEventListener('click', showComments);
-      counter = 5;
+      counter = MAX_COMMENTS_NUMBER;
     };
 
     bigPhotoCancel.addEventListener('click', function () {
