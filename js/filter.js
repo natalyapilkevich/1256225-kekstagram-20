@@ -25,39 +25,38 @@
   };
 
   var mix = function (arr) {
-    var newarr = [];
+    var randomPhoto = [];
     for (var i = MAX_COUNT_RANDOM_PHOTO; i > 0; i--) {
       var j = window.getRandomNumber(0, arr.length - 1);
-      newarr.push(arr[j]);
+      randomPhoto.push(arr[j]);
       arr.splice(j, 1);
     }
-    return newarr;
+    return randomPhoto;
   };
 
+  var changeFilter = function (button, data) {
+    removeActiveFilter();
+    button.classList.add('img-filters__button--active');
+    removePhotos();
+    window.debounce(window.picture.renderGallery(data));
+    window.gallery.onSuccess(data);
+  };
 
   var makeDefaultOrder = function () {
-    removeActiveFilter();
-    defaultOrderButton.classList.add('img-filters__button--active');
-    removePhotos();
-    window.debounce(window.picture.renderGallery(photos.slice()));
+    var defaultOrderPhotos = photos.slice();
+    changeFilter(defaultOrderButton, defaultOrderPhotos);
   };
 
   var makeRandomOrder = function () {
-    removeActiveFilter();
-    randomOrderButton.classList.add('img-filters__button--active');
-    removePhotos();
-    var randomArray = mix(photos.slice());
-    window.debounce(window.picture.renderGallery(randomArray));
+    var randomOrderPhotos = mix(photos.slice());
+    changeFilter(randomOrderButton, randomOrderPhotos);
   };
 
   var makeDiscussedOrder = function () {
-    removeActiveFilter();
-    discussedOrderButton.classList.add('img-filters__button--active');
-    removePhotos();
-    var discussArray = photos.slice().sort(function (a, b) {
+    var discussOrderPhotos = photos.slice().sort(function (a, b) {
       return b.comments.length - a.comments.length;
     });
-    window.debounce(window.picture.renderGallery(discussArray));
+    changeFilter(discussedOrderButton, discussOrderPhotos);
   };
 
   var onSuccess = function (data) {

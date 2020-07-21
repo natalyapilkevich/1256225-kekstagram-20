@@ -15,9 +15,11 @@
 
   var renderGallery = function (data) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < data.length; i++) {
-      fragment.appendChild(renderPhoto(data[i]));
-    }
+
+    data.forEach(function (el) {
+      fragment.appendChild(renderPhoto(el));
+    });
+
 
     photoListElement.appendChild(fragment);
     photoListElement.querySelector('.pictures__title').classList.remove('visually-hidden');
