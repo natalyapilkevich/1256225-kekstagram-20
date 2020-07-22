@@ -98,6 +98,8 @@
       effectDepth.style.width = '100%';
     } else {
       effectLevel.classList.add('hidden');
+      photoWithEffect.className = 'img-upload__preview';
+      photoWithEffect.style.filter = '';
     }
   };
 
