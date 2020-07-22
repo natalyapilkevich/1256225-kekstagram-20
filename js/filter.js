@@ -25,12 +25,12 @@
     });
   };
 
-  var mix = function (arr) {
+  var mix = function (standartPhotos) {
     var randomPhotos = [];
     for (var i = MAX_COUNT_RANDOM_PHOTO; i > 0; i--) {
-      var j = window.getRandomNumber(0, arr.length - 1);
-      randomPhotos.push(arr[j]);
-      arr.splice(j, 1);
+      var j = window.getRandomNumber(0, standartPhotos.length - 1);
+      randomPhotos.push(standartPhotos[j]);
+      standartPhotos.splice(j, 1);
     }
     return randomPhotos;
   };
@@ -39,25 +39,25 @@
     removeActiveFilter();
     button.classList.add('img-filters__button--active');
     removePhotos();
-    window.debounce(window.picture.renderGallery(data));
+    window.picture.renderGallery(data);
     window.gallery.onSuccess(data);
   };
 
-  var makeDefaultOrder = function () {
+  var onDefaultOrderButtonClick = function () {
     var defaultOrderPhotos = photos.slice();
     changeFilter(defaultOrderButton, defaultOrderPhotos);
   };
 
-  var makeRandomOrder = function () {
+  var onRandomOrderButtonClick = function () {
     var randomOrderPhotos = mix(photos.slice());
     changeFilter(randomOrderButton, randomOrderPhotos);
   };
 
-  var makeDiscussedOrder = function () {
-    var discussOrderPhotos = photos.slice().sort(function (a, b) {
+  var onDiscussedOrderButtonClick = function () {
+    var discussedOrderPhotos = photos.slice().sort(function (a, b) {
       return b.comments.length - a.comments.length;
     });
-    changeFilter(discussedOrderButton, discussOrderPhotos);
+    changeFilter(discussedOrderButton, discussedOrderPhotos);
   };
 
   var onSuccess = function (data) {
@@ -65,9 +65,9 @@
     imageFilter.classList.remove('img-filters--inactive');
     window.picture.renderGallery(photos);
 
-    defaultOrderButton.addEventListener('click', makeDefaultOrder);
-    randomOrderButton.addEventListener('click', makeRandomOrder);
-    discussedOrderButton.addEventListener('click', makeDiscussedOrder);
+    defaultOrderButton.addEventListener('click', window.debounce(onDefaultOrderButtonClick));
+    randomOrderButton.addEventListener('click', window.debounce(onRandomOrderButtonClick));
+    discussedOrderButton.addEventListener('click', window.debounce(onDiscussedOrderButtonClick));
   };
 
   window.backend.load(onSuccess);

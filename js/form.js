@@ -2,13 +2,13 @@
 (function () {
   var PHOTO_SCALE_VALUE_MIN = '25%';
   var PHOTO_SCALE_VALUE_MAX = '100%';
-  var MAX_EFFECT_SLIDER_LENGTH = 455;
+  var MAX_EFFECT_SLIDER_LENGTH = 453;
 
   // Загрузка изображения и показ формы редактирования
 
   var uploadFile = document.querySelector('#upload-file');
   var imageEditingForm = document.querySelector('.img-upload__overlay');
-  var photoWithEffect = imageEditingForm.querySelector('.img-upload__preview');
+  var photoWithEffect = imageEditingForm.querySelector('.img-upload__preview img');
   var uploadCancel = imageEditingForm.querySelector('#upload-cancel');
   var originalEffect = imageEditingForm.querySelector('input[id=effect-none]');
   var effectLevel = imageEditingForm.querySelector('.effect-level');
@@ -25,7 +25,7 @@
   var openPopup = function () {
     imageEditingForm.classList.remove('hidden');
     document.querySelector('body').classList.add('modal-open');
-    window.userPhoto.loadUserPhoto();
+    window.userPhoto.upload();
 
     document.addEventListener('keydown', onPopupEscPress);
   };
@@ -89,7 +89,7 @@
   var effectDepth = imageEditingForm.querySelector('.effect-level__depth');
 
 
-  var onFilter = function (evt) {
+  var onFieldsetOfEffectsChange = function (evt) {
     photoWithEffect.className = 'img-upload__preview effects__preview--' + evt.target.value;
     if (!originalEffect.checked) {
       effectLevel.classList.remove('hidden');
@@ -101,7 +101,7 @@
     }
   };
 
-  fieldsetOfEffects.addEventListener('change', onFilter);
+  fieldsetOfEffects.addEventListener('change', onFieldsetOfEffectsChange);
 
   var applyFilter = function (value) {
     if (photoWithEffect.className.includes('chrome')) {
@@ -118,37 +118,38 @@
 
     } else if (photoWithEffect.className.includes('heat')) {
       photoWithEffect.style.filter = 'brightness(' + value * 0.02 + 1 + ')';
+
     }
   };
 
-  effectPin.addEventListener('mousedown', function (evt) {
-    evt.preventDefault();
+  var onEffectPinMouseDown = function (downEvt) {
+    downEvt.preventDefault();
     var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
+      x: downEvt.clientX,
+      y: downEvt.clientY
     };
 
-    var onMouseMove = function (moveEvt) {
+    var onDocumentMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 
       var shift = {
         x: startCoords.x - moveEvt.clientX,
-        y: evt.clientY
+        y: downEvt.clientY
       };
 
       startCoords = {
         x: moveEvt.clientX,
-        y: evt.clientY
+        y: downEvt.clientY
       };
 
       if (parseInt(effectPin.style.left, 10) < 0) {
         effectPin.style.left = '0';
         shift.x = 0;
-        onMouseUp(moveEvt);
+        onDocumentMouseUp(moveEvt);
       } else if (parseInt(effectPin.style.left, 10) > MAX_EFFECT_SLIDER_LENGTH) {
         effectPin.style.left = MAX_EFFECT_SLIDER_LENGTH + 'px';
         shift.x = 0;
-        onMouseUp(moveEvt);
+        onDocumentMouseUp(moveEvt);
       } else {
         effectPin.style.left = (effectPin.offsetLeft - shift.x) + 'px';
       }
@@ -160,47 +161,46 @@
       effectDepth.style.width = powerOfEffect + '%';
     };
 
-    var onMouseUp = function (upEvt) {
-      upEvt.preventDefault();
-
-      effectPin.removeEventListener('mousemove', onMouseMove);
-      effectPin.removeEventListener('mouseup', onMouseUp);
+    var onDocumentMouseUp = function () {
+      document.removeEventListener('mousemove', onDocumentMouseMove);
+      document.removeEventListener('mouseup', onDocumentMouseUp);
     };
 
-    effectPin.addEventListener('mousemove', onMouseMove);
-    effectPin.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', onDocumentMouseMove);
+    document.addEventListener('mouseup', onDocumentMouseUp);
+  };
 
-  });
+  effectPin.addEventListener('mousedown', onEffectPinMouseDown);
 
   // Валидация хэштегов
 
   var space = ' ';
 
-  var checkRegular = function (arr, reg) {
+  var checkRegular = function (tags, reg) {
     var flag = true;
-    for (var i = 0; i < arr.length; i++) {
-      if (!reg.test(arr[i]) && arr[i] !== '') {
+    for (var i = 0; i < tags.length; i++) {
+      if (!reg.test(tags[i]) && tags[i] !== '') {
         flag = false;
       }
     }
     return flag;
   };
 
-  var checkLength = function (arr) {
+  var checkLength = function (tags) {
     var flag = true;
-    for (var i = 0; i < arr.length; i++) {
-      if (arr[i] !== '' && (arr[i].length < 2 || arr[i].length > 20)) {
+    for (var i = 0; i < tags.length; i++) {
+      if (tags[i] !== '' && (tags[i].length < 2 || tags[i].length > 20)) {
         flag = false;
       }
     }
     return flag;
   };
 
-  var checkRepeat = function (arr) {
+  var checkRepeat = function (tags) {
     var flag = true;
-    for (var i = 0; i < arr.length; i++) {
-      for (var j = i + 1; j < arr.length; j++) {
-        if (arr[i].toLowerCase() === arr[j].toLowerCase()) {
+    for (var i = 0; i < tags.length; i++) {
+      for (var j = i + 1; j < tags.length; j++) {
+        if (tags[i].toLowerCase() === tags[j].toLowerCase()) {
           return false;
         }
       }

@@ -4,7 +4,7 @@
 
   var uploadFile = document.querySelector('#upload-file');
 
-  var loadUserPhoto = function () {
+  var upload = function () {
     var file = uploadFile.files[0];
     var preview = document.querySelector('.img-upload__preview img');
     var fileName = file.name.toLowerCase();
@@ -25,6 +25,6 @@
   };
 
   window.userPhoto = {
-    loadUserPhoto: loadUserPhoto
+    upload: upload
   };
 })();
