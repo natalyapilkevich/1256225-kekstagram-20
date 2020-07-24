@@ -65,9 +65,15 @@
     imageFilter.classList.remove('img-filters--inactive');
     window.picture.renderGallery(photos);
 
-    defaultOrderButton.addEventListener('click', window.debounce(onDefaultOrderButtonClick));
-    randomOrderButton.addEventListener('click', window.debounce(onRandomOrderButtonClick));
-    discussedOrderButton.addEventListener('click', window.debounce(onDiscussedOrderButtonClick));
+    imageFilter.addEventListener('click', window.debounce(function (evt) {
+      if (evt.target === defaultOrderButton) {
+        onDefaultOrderButtonClick();
+      } else if (evt.target === randomOrderButton) {
+        onRandomOrderButtonClick();
+      } else if (evt.target === discussedOrderButton) {
+        onDiscussedOrderButtonClick();
+      }
+    }));
   };
 
   window.backend.load(onSuccess);
